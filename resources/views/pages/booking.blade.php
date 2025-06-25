@@ -1,0 +1,145 @@
+@extends('layouts.app')
+
+@section('content')
+@php
+// Example of reserved hours (static mock data)
+$reservedHours = [9, 13, ]; // 9 AM, 1 PM, 3 PM
+$bookedHours = [6, 15]; // Fully paid and confirmed
+
+@endphp
+
+<div class="container my-5">
+    <div class="row g-4">
+        <!-- Left Section -->
+        <div class="col-lg-8">
+            <!-- Select Court -->
+            <div class="card mb-4">
+                <div class="card-header fw-bold">
+                    <i class="bi bi-map"></i> Select Court
+                </div>
+                <div class="card-body">
+                    @foreach ($courts as $court)
+                    <div class="form-check border p-3 rounded mb-3">
+                        <input class="form-check-input" type="radio" name="court_id" id="court{{ $court->id }}" value="{{ $court->id }}">
+                        <label class="form-check-label w-100" for="court{{ $court->id }}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">{{ $court->name }}</h5>
+                                    <small class="text-muted">{{ ucfirst($court->type) }}</small>
+                                    <div class="mt-1">
+                                        @foreach (explode(',', $court->features) as $feature)
+                                        <span class="badge bg-secondary me-1">{{ trim($feature) }}</span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <div class="fw-bold text-primary">${{ $court->price }}/hour</div>
+                            </div>
+                        </label>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="card mb-4">
+                <div class="card-header fw-bold">
+                    <i class="bi bi-calendar-event"></i> Date & Time
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Select Date</label>
+                            <input type="date" name="date" class="form-control" min="{{ now()->toDateString() }}">
+                        </div>
+
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="form-label">Available Time Slots</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            @for ($i = 6; $i <= 20; $i++)
+                                @php
+                                $isBooked=in_array($i, $bookedHours);
+                                $isReserved=in_array($i, $reservedHours);
+                                $label=$isBooked ? 'Booked' : ($isReserved ? 'Reserved' : 'Available' );
+                                $btnClass=$isBooked ? 'btn-danger disabled' : ($isReserved ? 'btn-warning disabled' : 'btn-outline-dark' );
+                                @endphp
+                                <button
+                                type="button"
+                                class="btn btn-sm {{ $btnClass }}"
+                                title="{{ $label }}">
+                                {{ str_pad($i, 2, '0', STR_PAD_LEFT) }}:00
+                                </button>
+                                @endfor
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player Information -->
+            <div class="card mb-4">
+                <div class="card-header fw-bold">
+                    <i class="bi bi-people-fill"></i> Player Information
+                </div>
+                <div class="card-body row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Phone number</label>
+                        <input type="number" class="form-control" name="players" min="1" max="22">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Team Name (Optional)</label>
+                        <input type="text" class="form-control" name="team_name">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section (Summary & Payment) -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header fw-bold">
+                    Booking Summary
+                </div>
+                <div class="card-body">
+                    <p><strong>Court:</strong> <span id="summaryCourt">-</span></p>
+                    <p><strong>Hrs:</strong>-</p>
+                    <p><strong>Price:</strong> <span id="summaryPrice">$0</span></p>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-dark w-100 ">Reserve</button>
+                <p class="text-success text-center">This time is reserved for you for 15mins</p>
+            </div>
+            <div class="card">
+                <div class="card-header fw-bold">
+                    Payment Method
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="payment_method" id="card" checked>
+                        <label class="form-check-label" for="card">Credit/Debit Card</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="payment_method" id="cash">
+                        <label class="form-check-label" for="cash">Pay at Venue</label>
+                    </div>
+                    <div class="mb-2">
+                        <input type="text" class="form-control" placeholder="Card Number">
+                    </div>
+                    <div class="mb-2 d-flex gap-2">
+                        <input type="text" class="form-control" placeholder="MM/YY">
+                        <input type="text" class="form-control" placeholder="CVV">
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="terms">
+                        <label class="form-check-label" for="terms">I agree to the terms and conditions</label>
+                    </div>
+                    <button class="btn btn-dark w-100">Confirm Booking – $0.00</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

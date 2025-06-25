@@ -1,0 +1,3 @@
+<div class="container-fluid px-lg-4 mt-4 position-relative">
+    <img src="{{ asset('image/carosell/1.jpg') }}" class="w-100 d-block" alt="Futsal Image" />
+</div>

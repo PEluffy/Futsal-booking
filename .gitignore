@@ -1,0 +1,77 @@
+*.log
+.DS_Store
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
+.env
+# Laravel & PHP
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+/storage/app/public
+/storage/debugbar
+/storage/framework/cache/data
+/storage/framework/sessions
+/storage/framework/testing
+/storage/framework/views
+/storage/logs
+
+# Environment
+.env
+.env.backup
+.env.local
+.env.production
+.env.development
+.env.testing
+
+# Composer & NPM
+composer.lock
+package-lock.json
+yarn.lock
+npm-debug.log
+pnpm-debug.log
+
+# IDE & OS Specific
+.idea
+.vscode
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+*.log
+
+# PHPUnit
+phpunit.result.cache
+
+# Laravel Octane (if using)
+storage/clockwork
+storage/octane
+
+# Laravel Telescope (if using)
+storage/telescope
+
+# Laravel Horizon (if using)
+storage/horizon
+
+# Misc
+node_modules/

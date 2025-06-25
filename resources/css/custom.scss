@@ -1,0 +1,100 @@
+// Custom.scss
+// Option A: Include all of Bootstrap
+
+// Include any default variable overrides here (though functions won't be available)
+$primary: #37b24d;
+$secondary: #8ce99a;
+
+// Then add additional custom code here
+* {
+    font-family: "Poppins", sans-serif;
+}
+
+.h-font {
+    font-family: "Merienda", cursive;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+.swiper-container {
+    width: 100%;
+    overflow: hidden;
+    display: block;
+}
+.availability-form {
+    margin-top: -30px;
+    z-index: 2;
+    position: relative;
+}
+.checkbox {
+    font-size: 16px;
+    font-weight: 600;
+}
+@media screen and (max-width: 575px) {
+    .availability-form {
+        margin-top: 20px;
+        z-index: 2;
+        position: relative;
+        padding: 0 30px;
+    }
+}
+
+.h-line {
+    width: 150px;
+    margin: 0 auto;
+    height: 1.7px;
+}
+
+.pop:hover {
+    border-top-color: $primary !important;
+    transform: scale(1.03);
+    transition: all 0.4s;
+}
+div.login-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+}
+.dop:hover {
+    background-color: $primary !important;
+    transition: all 0.4s;
+    transform: scale(1.02);
+}
+.custom-alert {
+    position: fixed;
+    top: 60px;
+    right: 25px;
+}
+#dashboard-menu {
+    position: fixed;
+    height: 100%;
+}
+@media screen and (max-width: 991px) {
+    #dashboard-menu {
+        height: auto;
+        width: 100%;
+    }
+    #main-content {
+        margin-top: 60px;
+    }
+    .custom-alert {
+        position: fixed;
+        top: 99px;
+        right: 25px;
+    }
+}
+div.booking-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+}
