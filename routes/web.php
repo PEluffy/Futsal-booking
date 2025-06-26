@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CourtsController;
 use App\Http\Controllers\ForgotPasswordController;
@@ -10,7 +11,9 @@ use App\Http\Middleware\AdminAuthMiddleware;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\IfAdminIsLoginMiddleware;
 use App\Http\Middleware\IsUserLoggedInMiddleware;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 
 Route::controller(ForgotPasswordController::class)->group(function () {
@@ -52,3 +55,23 @@ Route::prefix('admin')->group(function () {
     Route::post('/contact', [ContactController::class, 'updateContact'])->name('admin.update.contact');
     Route::post('/court', [CourtsController::class, 'createCourt'])->name('admin.create.court');
 });
+
+Route::post('/booking', [BookingController::class, 'reserveCourt'])->name('book.reserve');
+
+Route::get('/email/verify', function () {
+    return view('pages.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+//why emailverificationrequest instead of normal http request  beacuse this will handle the request id and hash parameter comming from the request automaticcalyy
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill(); //this will make Email as verified 
+
+    return redirect('/');
+})->middleware(['auth', 'signed'])->name('verification.verify');
