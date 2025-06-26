@@ -6,6 +6,7 @@
 @include('partials.courts')
 @include('partials.testimonials')
 @include('partials.facilities')
+@include('partials.membership')
 @endsection
 @section('scripts')
 
