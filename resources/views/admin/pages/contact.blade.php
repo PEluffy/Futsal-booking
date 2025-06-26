@@ -3,12 +3,7 @@
 @section('title', 'Manage Contact Info')
 
 @section('content')
-<?php
 
-use Illuminate\Support\Facades\Log;
-
-Log::info($contact);
-?>
 <div class="container mt-4">
     <h2 class="mb-4"> Manage Contact Information</h2>
     <div class="card">
