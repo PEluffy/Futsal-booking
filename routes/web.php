@@ -7,10 +7,6 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CourtsController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\PageController;
-use App\Http\Middleware\AdminAuthMiddleware;
-use App\Http\Middleware\AuthMiddleware;
-use App\Http\Middleware\IfAdminIsLoginMiddleware;
-use App\Http\Middleware\IsUserLoggedInMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -61,9 +57,8 @@ Route::prefix('admin')->group(function () {
     Route::post('/court', [CourtsController::class, 'createCourt'])->name('admin.create.court');
 });
 
-Route::post('/booking', [BookingController::class, 'reserveCourt'])->name('book.reserve');
 
-Route::prifix('email')->group(function () {
+Route::prefix('email')->group(function () {
 
     Route::get('/verify', function () {
         return view('pages.verify-email');
@@ -82,3 +77,5 @@ Route::prifix('email')->group(function () {
         return redirect('/');
     })->middleware(['auth', 'signed'])->name('verification.verify');
 });
+
+Route::post('/booking', [BookingController::class, 'reserveCourt'])->name('book.reserve');

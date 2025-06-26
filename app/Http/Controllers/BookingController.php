@@ -11,6 +11,6 @@ class BookingController extends Controller
     public function reserveCourt(Request $request)
     {
         Log::info($request);
-        Log::info(Auth::guard('web')->user());
+        Log::info(Auth::guard('web')->user()->id);
     }
 }

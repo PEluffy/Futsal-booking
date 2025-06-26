@@ -8,9 +8,8 @@ $bookedHours = [6, 15]; // Fully booked hours (paid)
 @endphp
 
 <div class="container my-5">
-    <form method="POST" action="{{ Route('book.reserve') }}">
+    <form method="POST" action="{{ Route('book.reserve') }}" class="form">
         @csrf
-
         <div class="row g-4">
             <!-- Left Section -->
             <div class="col-lg-8">
@@ -22,7 +21,7 @@ $bookedHours = [6, 15]; // Fully booked hours (paid)
                     <div class="card-body">
                         @foreach ($courts as $court)
                         <div class="form-check border p-3 rounded mb-3">
-                            <input class="form-check-input" type="radio" name="court_id" id="court{{ $court->id }}" value="{{ $court->id }}" required>
+                            <input class="form-check-input" type="radio" name="court_id" id="court{{ $court->id }}" value="{{ $court->id }}">
                             <label class="form-check-label w-100" for="court{{ $court->id }}">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
@@ -51,7 +50,13 @@ $bookedHours = [6, 15]; // Fully booked hours (paid)
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Select Date</label>
-                                <input type="date" name="date" class="form-control" min="{{ now()->toDateString() }}" required>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    class="form-control"
+                                    min="{{ now()->toDateString() }}"
+                                    max="{{ now()->addDays(2)->toDateString() }}"
+                                    required>
                             </div>
                         </div>
 
@@ -97,7 +102,7 @@ $bookedHours = [6, 15]; // Fully booked hours (paid)
                         </div>
                     </div>
                 </div>
-
+                <p class="error text-danger"></p>
                 <!-- Submit Button -->
                 <div>
                     <button type="submit" class="btn btn-dark w-100">Reserve</button>
@@ -105,6 +110,7 @@ $bookedHours = [6, 15]; // Fully booked hours (paid)
                 </div>
             </div>
         </div>
+
     </form>
 </div>
 @endsection
@@ -123,6 +129,14 @@ $bookedHours = [6, 15]; // Fully booked hours (paid)
             // Set hidden input value
             document.getElementById('selected_hour').value = this.dataset.hour;
         });
+    });
+    document.querySelector('.form').addEventListener('submit', function(e) {
+
+        const selectedHour = document.getElementById('selected_hour').value;
+        if (!selectedHour) {
+            e.preventDefault();
+            document.querySelector('.error').textContent = "Note:Plz select the time slow before reserving"
+        }
     });
 </script>
 @endsection
