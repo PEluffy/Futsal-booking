@@ -1,12 +1,17 @@
 <div class="bg-dark text-white p-3" style="width: 250px; height: 100vh;">
     <h4 class="text-center">Admin Panel
-        @auth
+        @php
+        use Illuminate\Support\Facades\Auth;
+        @endphp
+
+        @if (Auth::guard('admin')->check())
         @php
         $email = Auth::guard('admin')->user()->email;
         $username = explode('@', $email)[0];
         @endphp
         Welcome {{ $username }}
-        @endauth
+        @endif
+
     </h4>
     <ul class="nav flex-column mt-4">
         <li class="nav-item mb-2">
