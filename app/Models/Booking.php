@@ -11,7 +11,7 @@ class Booking extends Model
         'time',
         'phone',
         'team_name',
-        'price',
+        'user_id',
         'court_id',
         'status',
     ];
