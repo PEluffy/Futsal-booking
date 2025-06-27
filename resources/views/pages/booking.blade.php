@@ -1,6 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+@if (session('status'))
+<div class="alert alert-success">
+    {{ session('status') }}
+</div>
+@endif
 @php
 // These are mock data for demonstration
 $reservedHours = [9, 13]; // Reserved hours (temporary)
@@ -62,7 +76,7 @@ $bookedHours = [6, 15]; // Fully booked hours (paid)
 
                         <div class="mt-4">
                             <label class="form-label">Available Time Slots</label>
-                            <input type="hidden" name="selected_hour" id="selected_hour" required>
+                            <input type="hidden" name="time" id="selected_hour" required>
 
                             <div class="d-flex flex-wrap gap-2">
                                 @for ($i = 6; $i <= 20; $i++)
@@ -97,8 +111,8 @@ $bookedHours = [6, 15]; // Fully booked hours (paid)
                             <input type="number" class="form-control" name="phone" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Team Name (Optional)</label>
-                            <input type="text" class="form-control" name="team_name">
+                            <label class="form-label">Team Name </label>
+                            <input type="text" class="form-control" name="team_name" required>
                         </div>
                     </div>
                 </div>
