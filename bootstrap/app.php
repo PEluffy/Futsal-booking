@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'adminguestmiddleware' => \App\Http\Middleware\AdminAuthMiddleware::class,
             'adminauthmiddleware' => \App\Http\Middleware\IfAdminIsLoginMiddleware::class,
             'userguestmiddleware' => \App\Http\Middleware\IsUserLoggedInMiddleware::class,
+            'userverifiedmiddleware' => \App\Http\Middleware\UserGmailVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

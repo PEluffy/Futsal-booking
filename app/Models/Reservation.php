@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Booking extends Model
+class Reservation extends Model
 {
     protected $fillable = [
-        'date',
-        'time',
-        'phone',
-        'team_name',
         'user_id',
         'court_id',
+        'date',
+        'time',
+        'reserved_at',
     ];
 }
