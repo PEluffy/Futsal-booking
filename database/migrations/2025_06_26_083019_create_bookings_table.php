@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('team_name');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('court_id')->references('id')->on('courts')->onDelete('cascade');
-            $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->unique(['court_id', 'date', 'time']);
         });

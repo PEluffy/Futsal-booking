@@ -78,4 +78,6 @@ Route::prefix('email')->group(function () {
     })->middleware(['auth', 'signed'])->name('verification.verify');
 });
 
-Route::post('/booking', [BookingController::class, 'reserveCourt'])->name('book.reserve');
+Route::post('/booking', [BookingController::class, 'bookCourt'])->name('book.court')->middleware('userverifiedmiddleware');
+
+Route::post('/reserve-time', [BookingController::class, 'reserveCourt'])->name('reserve.court')->middleware('userverifiedmiddleware');

@@ -3,9 +3,12 @@
 <div {{ $attributes->merge(['class' => 'card h-100']) }}>
     <img src="{{ asset('image/courts/' . $court->image) }}"
         class="card-img-top"
-        alt="{{ $court->name }}">
+        alt="{{ $court->name }}"
+        width="400"
+        height="300"
+        style="aspect-ratio: 3 / 2;">
 
-    <div class="card-body">
+    <div class=" card-body">
         <h5 class="card-title">{{ $court->name }}</h5>
         <p class="card-text">Price: ${{ $court->price }}</p>
     </div>
