@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CourtsController;
+use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\PageController;
 use Illuminate\Http\Request;
@@ -48,6 +49,7 @@ Route::prefix('admin')->group(function () {
         // Route::get('/courts', fn() => view('admin.pages.courts'))->name('admin.courts');
         Route::get('/courts', [CourtsController::class, 'showCourts'])->name('admin.courts');
         Route::get('/contact', [ContactController::class, 'showContact'])->name('admin.show.contact');
+        Route::get('/facility', [FacilityController::class, 'showFacility'])->name('admin.show.facility');
     });
 
     Route::get('/login', fn() => view('admin.pages.login'))->name('admin.show.login')->middleware('adminauthmiddleware');

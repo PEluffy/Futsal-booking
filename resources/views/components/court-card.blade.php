@@ -11,6 +11,7 @@
     <div class=" card-body">
         <h5 class="card-title">{{ $court->name }}</h5>
         <p class="card-text">Price: ${{ $court->price }}</p>
+        <span class="card-text">Type: {{ $court->type }}</span>
     </div>
     <a href="{{ url('/booking') }}" class="btn btn-outline-primary  mx-2 mb-2">Book</a>
 </div>
