@@ -7,47 +7,19 @@
 </div>
 
 <div class="container">
-    <div class="row">
-        @php
-        $facilities = [
-        [
-        'title' => 'Wi-Fi',
-        'image' => 'wifi.svg',
-        'desc' => 'Free high-speed internet access throughout the facility.'
-        ],
-        [
-        'title' => 'Discounts',
-        'image' => 'rs.svg',
-        'desc' => 'Great discounts for members and early bookings.'
-        ],
-        [
-        'title' => 'Clean Water',
-        'image' => 'love.svg',
-        'desc' => 'Stay hydrated with our purified water stations.'
-        ],
-        [
-        'title' => 'Support Line',
-        'image' => 'call.svg',
-        'desc' => 'Need help? Call our dedicated support anytime.'
-        ],
-
-        ];
-        @endphp
-
+    <div class="row justify-content-center g-4">
+        @if (empty($facilities) || count($facilities) == 0)
+        <div>Nothing to show</div>
+        @else
         @foreach ($facilities as $facility)
-        <div class="col-lg-4 col-md-6 mb-5 px-4">
-            <div class="bg-white rounded shadow p-4 border-top border-4 border-dark pop h-100">
-                <div class="d-flex align-items-center mb-2">
-                    <img src="{{ asset('image/svg/' . $facility['image']) }}" width="40px" alt="{{ $facility['title'] }}">
-                    <h5 class="ms-2">{{ $facility['title'] }}</h5>
-                </div>
-                <p class="mb-0">{{ $facility['desc'] }}</p>
-            </div>
-        </div>
+
+        <x-facility-card :facility="$facility" />
+
         @endforeach
+        @endif
+
     </div>
 </div>
 @endsection
-
 @section('scripts')
 @endsection
