@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\CourtType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('courts', function (Blueprint $table) {
+        Schema::create('court_facility', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('price');
-            $table->enum('type', array_column(CourtType::cases(), 'value'));
-            $table->string('image');
+            $table->foreignId('court_id')->constrained()->onDelete('cascade');
+            $table->foreignId('facility_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('courts');
+        Schema::dropIfExists('court');
     }
 };

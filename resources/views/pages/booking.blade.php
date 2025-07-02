@@ -40,12 +40,6 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h5 class="mb-1">{{ $court->name }}</h5>
-                                            <small class="text-muted">{{ ucfirst($court->type) }}</small>
-                                            <div class="mt-1">
-                                                @foreach (explode(',', $court->features) as $feature)
-                                                <span class="badge bg-secondary me-1">{{ trim($feature) }}</span>
-                                                @endforeach
-                                            </div>
                                         </div>
                                         <div class="fw-bold text-primary">${{ $court->price }}/hour</div>
                                     </div>
@@ -139,29 +133,17 @@
         const hiddenInput = document.getElementById('selected_hour');
         const errorMsg = document.querySelector('.error');
         const successMsg = document.querySelector('.success');
+        const courtInput = document.querySelector('input[name="court_id"]:checked');
+        const dateInput = document.querySelector('input[name="date"]');
 
-        buttons.forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const isAlreadySelected = this.classList.contains('btn-dark');
-                //for server
-                const selectedHour = this.dataset.hour;
-                const selectedDate = document.querySelector('input[name="date"]').value;
-                const selectedCourtId = document.querySelector('input[name="court_id"]:checked')?.value;
-                console.log(selectedDate, selectedHour, selectedCourtId);
+        function clearSelection() {
+            buttons.forEach(b => b.classList.remove('btn-dark', 'text-white'));
+            hiddenInput.value = '';
+            errorMsg.textContent = '';
+        }
 
-                if (!selectedDate || !selectedCourtId) {
-                    errorMsg.textContent = 'Please select a court and date first.';
-                    return;
-                }
-                if (isAlreadySelected) {
-                    // Unselect the slot
-                    buttons.forEach(b => b.classList.remove('btn-dark', 'text-white'));
-                    hiddenInput.value = '';
-                    errorMsg.textContent = '';
-                    return;
-                }
-
-
+        async function reserveSlot(button, selectedHour, selectedCourtId, selectedDate) {
+            try {
                 const response = await fetch('/reserve-time', {
                     method: 'POST',
                     headers: {
@@ -175,38 +157,47 @@
                     }),
                 });
 
-
                 if (response.redirected) {
-                    console.log('redirected');
                     window.location.href = response.url;
                     return;
                 }
+
                 const data = await response.json();
-                try {
 
-                    if (response.ok) {
-                        console.log('response is ok');
-                        // Reservation successful, update UI
-                        buttons.forEach(b => b.classList.remove('btn-dark', 'text-white'));
-                        this.classList.add('btn-dark', 'text-white');
-                        hiddenInput.value = selectedHour;
-                        errorMsg.textContent = '';
-                        successMsg.textContent = data.message;
-                    } else {
-                        // Reservation failed
-                        errorMsg.textContent = data.message || 'This slot is not available.';
-                    }
-
-                } catch (error) {
-                    errorMsg.textContent = 'Something went wrong';
+                if (response.ok) {
+                    clearSelection();
+                    button.classList.add('btn-dark', 'text-white');
+                    hiddenInput.value = selectedHour;
+                    successMsg.textContent = data.message || 'Time slot reserved!';
+                    errorMsg.textContent = '';
+                } else {
+                    errorMsg.textContent = data.message || 'This slot is not available.';
                 }
+            } catch (err) {
+                errorMsg.textContent = 'Something went wrong.';
+            }
+        }
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const selectedHour = button.dataset.hour;
+                const selectedDate = dateInput.value;
+                const selectedCourtId = document.querySelector('input[name="court_id"]:checked')?.value;
+
+                if (!selectedDate || !selectedCourtId) {
+                    errorMsg.textContent = 'Please select a court and date first.';
+                    return;
+                }
+
+                if (button.classList.contains('btn-dark')) {
+                    clearSelection(); // Unselect if clicked again
+                    return;
+                }
+
+                reserveSlot(button, selectedHour, selectedCourtId, selectedDate);
             });
         });
 
-        // Clear any error message
-        errorMsg.textContent = '';
-
-        // Form validation
         document.querySelector('.form').addEventListener('submit', function(e) {
             if (!hiddenInput.value) {
                 e.preventDefault();

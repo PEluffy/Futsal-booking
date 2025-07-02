@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CourtType;
 use Illuminate\Database\Eloquent\Model;
 
 class Court extends Model
@@ -10,5 +11,14 @@ class Court extends Model
         'name',
         'price',
         'image',
+        'type'
     ];
+
+    protected $casts = [
+        'type' => CourtType::class,
+    ];
+    public function facilities()
+    {
+        return $this->belongsToMany(Facility::class);
+    }
 }
