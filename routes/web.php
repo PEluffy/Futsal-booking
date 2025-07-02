@@ -83,3 +83,4 @@ Route::prefix('email')->group(function () {
 Route::post('/booking', [BookingController::class, 'bookCourt'])->name('book.court')->middleware('userverifiedmiddleware');
 
 Route::post('/reserve-time', [BookingController::class, 'reserveCourt'])->name('reserve.court')->middleware('userverifiedmiddleware');
+Route::post('/admin/facility', [FacilityController::class, 'createFacility'])->name('admin.create.facility');

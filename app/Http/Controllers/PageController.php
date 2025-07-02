@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Models\Court;
+use App\Models\Facility;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,8 @@ class PageController extends Controller
     public function showIndex()
     {
         $courts = Court::all();
-        return view('welcome', compact('courts'));
+        $facilities = Facility::take(4)->get();
+        return view('welcome', compact('courts', 'facilities'));
     }
     public function showBooking()
     {
@@ -27,7 +29,8 @@ class PageController extends Controller
 
     public function showFacilities()
     {
-        return view('pages.facilities');
+        $facilities = Facility::all();
+        return view('pages.facilities', compact('facilities'));
     }
     public function showCourts()
     {
