@@ -57,6 +57,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     Route::post('/contact', [ContactController::class, 'updateContact'])->name('admin.update.contact');
     Route::post('/court', [CourtsController::class, 'createCourt'])->name('admin.create.court');
+    Route::delete('/court/delete/{id}', [CourtsController::class, 'deleteCourt'])->name('admin.court.delete');
 });
 
 
@@ -84,3 +85,5 @@ Route::post('/booking', [BookingController::class, 'bookCourt'])->name('book.cou
 
 Route::post('/reserve-time', [BookingController::class, 'reserveCourt'])->name('reserve.court')->middleware('userverifiedmiddleware');
 Route::post('/admin/facility', [FacilityController::class, 'createFacility'])->name('admin.create.facility');
+
+Route::post('/admin/court/update/{courtId}', [CourtsController::class, 'updateCourt'])->name('admin.update.court');

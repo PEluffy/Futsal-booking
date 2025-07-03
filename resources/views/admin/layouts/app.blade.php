@@ -16,7 +16,7 @@
     <div class="d-flex" style="min-height: 100vh;">
         @include('admin.partials.sidebar')
 
-        <div class="flex-grow-1 p-4">
+        <div class="flex-grow-1 p-4" style="height: 100vh; overflow-y: auto;">
             @yield('content')
         </div>
         @yield('scripts')

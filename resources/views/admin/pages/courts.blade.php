@@ -21,11 +21,11 @@
         </thead>
         <tbody>
             @foreach ($courts as $court)
-            <tr>
-                <td>{{ $court->name }}</td>
-                <td>{{ $court->type }}</td>
-                <td>Rs. {{ $court->price }}</td>
-                <td> <img src={{ asset('image/courts/' . $court->image) }} alt="Current Court Image" style="max-width:40px; max-height:40px; object-fit: contain;"> {{ $court->image }}</td>
+            <tr data-court-id="{{ $court->id }}">
+                <td class="court-name">{{ $court->name }}</td>
+                <td class="court-type">{{ $court->type }}</td>
+                <td class="court-price">Rs. {{ $court->price }}</td>
+                <td> <img class="court-image" src={{ asset('image/courts/' . $court->image) }} alt="Current Court Image" style="max-width:40px; max-height:40px; object-fit: contain;"></td>
 
                 <td>
                     <!-- Button trigger modal -->
@@ -55,8 +55,7 @@
                                 <div class="modal-body">
                                     <form id="editCourtForm" method="POST" enctype="multipart/form-data">
                                         @csrf
-                                        @method('PUT')
-
+                                        <meta name="csrf-token" content="{{ csrf_token() }}">
                                         <div class="mb-3">
                                             <label for="court-name" class="form-label">Court Name</label>
                                             <input type="text" name="name" id="court-name" class="form-control" required>
@@ -97,12 +96,12 @@
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Update</button>
+                                    <button type="button" class="btn btn-primary update-court">Update</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <form method="POST" style="display:inline;">
+                    <form method="POST" style="display:inline;" action={{ route('admin.court.delete',$court->id) }}>
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-danger"
@@ -177,42 +176,95 @@
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const modal = document.getElementById('staticBackdrop');
-        modal.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarget;
-
-            const id = button.getAttribute('data-id');
-            const name = button.getAttribute('data-name');
-            const type = button.getAttribute('data-type');
-            const price = button.getAttribute('data-price');
-            const facilities = JSON.parse(button.getAttribute('data-facilities'));
-            const imageUrl = button.getAttribute('data-image');
-
-
-            console.log({
-                id,
-                name,
-                type,
-                price,
-                facilities
-            });
-
-            // Fill modal fields
-            document.getElementById('court-name').value = name;
-            document.getElementById('court-type').value = type;
-            document.getElementById('court-price').value = price;
-
-            // Check the facilities checkboxes that belong to this court
-            document.querySelectorAll('.edit-facility-checkbox').forEach(checkbox => {
-                checkbox.checked = facilities.includes(parseInt(checkbox.value));
-            });
-            document.getElementById('court-current-image').src = imageUrl;
-
-            // Update form action URL dynamically for the court being edited
-            const form = document.getElementById('editCourtForm');
-            form.action = `/admin/courts/${id}`; // adapt to your route
+    document.querySelector('.update-court').addEventListener('click', async () => {
+        const form = document.getElementById('editCourtForm');
+        const formData = new FormData(form);
+        const courtId = form.getAttribute('data-id');
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
+        console.log(courtId);
+        const editModal = document.querySelector('#staticBackdrop');
+        const modalInstance = bootstrap.Modal.getInstance(editModal);
+        modalInstance.hide();
+        const res = await fetch(`/admin/court/update/${courtId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: formData,
         });
+        const data = await res.json();
+        const row = document.querySelector(`tr[data-court-id="${data.court.id}"]`);
+        console.log(row);
+
+        if (row) {
+            const courtName = document.querySelector('.court-name');
+            const courtType = document.querySelector('.court-type');
+            const courtPrice = document.querySelector('.court-price');
+            const courtImage = document.querySelector('.court-image');
+            courtName.textContent = data.court.name;
+            courtType.textContent = data.court.type;
+            courtPrice.textContent = `Rs. ${data.court.price}`;
+            courtImage.src = `/image/courts/${data.court.image}`;
+            courtImage.alt = data.court.name;
+
+
+        }
+
+        // if (row) {
+        //     console.log('we are inside row');
+        //     row.querySelector('.court-name').textContent = court.name;
+        //     row.querySelector('.court-type').textContent = court.type;
+        //     row.querySelector('.court-price').textContent = `Rs. ${court.price}`;
+        //     const img = row.querySelector('.court-image img');
+        //     img.src = `/image/courts/${court.image}`;
+        //     img.alt = court.name;
+        //     // Optionally update the image file name text if you want
+        //     row.querySelector('.court-image').lastChild.textContent = ` ${court.image}`;
+
+        //     // Also update the Edit button's data attributes so that next time you open modal, it has latest data
+        //     const editBtn = row.querySelector('button.btn-primary[data-bs-toggle="modal"]');
+        //     if (editBtn) {
+        //         editBtn.setAttribute('data-name', court.name);
+        //         editBtn.setAttribute('data-type', court.type);
+        //         editBtn.setAttribute('data-price', court.price);
+        //         editBtn.setAttribute('data-image', `/image/courts/${court.image}`);
+
+        //         // For facilities, you can send IDs as JSON string
+        //         const facilityIds = court.facilities.map(f => f.id);
+        //         editBtn.setAttribute('data-facilities', JSON.stringify(facilityIds));
+        //     }
+        // }
+
+    })
+
+    const modal = document.getElementById('staticBackdrop');
+    modal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget;
+
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        const type = button.getAttribute('data-type');
+        const price = button.getAttribute('data-price');
+        const facilities = JSON.parse(button.getAttribute('data-facilities'));
+        const imageUrl = button.getAttribute('data-image');
+        const form = document.getElementById('editCourtForm');
+        form.setAttribute('data-id', id);
+
+        // Fill modal fields
+        document.getElementById('court-name').value = name;
+        document.getElementById('court-type').value = type;
+        document.getElementById('court-price').value = price;
+
+        // Check the facilities checkboxes that belong to this court
+        document.querySelectorAll('.edit-facility-checkbox').forEach(checkbox => {
+            checkbox.checked = facilities.includes(parseInt(checkbox.value));
+        });
+        document.getElementById('court-current-image').src = imageUrl;
+
+        // Update form action URL dynamically for the court being edited
+        document.getElementById('court-price').value = price;
     });
 </script>
 @endsection

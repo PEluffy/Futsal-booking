@@ -46,9 +46,9 @@
             <meta name="csrf-token" content="{{ csrf_token() }}">
             <label for="name" class="form-label">Facility Name</label>
             <input type="text" class="form-control" id="name" name="name" placeholder="Enter facility name">
-            <label for="icon" class="form-label">Icon Svg</label>
+            <label for="icon" class="form-label mt-3">Icon Svg</label>
             <input type="text" class="form-control" id="icon" name="icon" placeholder="plz provide svg" />
-            <label for="desc" class="form-label">Facility Name</label>
+            <label for="desc" class="form-label mt-3">Facility Description</label>
             <input type="text" class="form-control" id="desc" name="desc" placeholder="Enter description">
         </div>
         <button type="submit" class="btn btn-primary">Add Facility</button>
