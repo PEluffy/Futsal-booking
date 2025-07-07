@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('price');
             $table->enum('type', array_column(CourtType::cases(), 'value'));
             $table->string('image');
+            $table->string('slug')->unique()->after('name');
             $table->timestamps();
         });
     }

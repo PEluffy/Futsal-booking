@@ -11,7 +11,8 @@ class Court extends Model
         'name',
         'price',
         'image',
-        'type'
+        'type',
+        'slug',
     ];
 
     protected $casts = [

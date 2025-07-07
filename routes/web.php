@@ -87,3 +87,5 @@ Route::post('/reserve-time', [BookingController::class, 'reserveCourt'])->name('
 Route::post('/admin/facility', [FacilityController::class, 'createFacility'])->name('admin.create.facility');
 
 Route::post('/admin/court/update/{courtId}', [CourtsController::class, 'updateCourt'])->name('admin.update.court');
+
+Route::get('/court/{slug}', [CourtsController::class, 'showCourtDetails'])->name('show.court.details');

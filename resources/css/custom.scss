@@ -112,3 +112,11 @@ div.booking-form {
     transform: translate(-50%, -50%);
     width: 400px;
 }
+
+.img-court-card:hover {
+    transform: scale(1.05);
+    transition: all 0.5s;
+}
+.court-img-container {
+    overflow: hidden;
+}
