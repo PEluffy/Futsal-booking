@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use App\Enums\CourtType;
 use App\Models\Court;
 use App\Models\Facility;
@@ -19,6 +20,11 @@ class CourtsController extends Controller
         $facilities = Facility::all();
         return view('admin.pages.courts', compact('courts', 'facilities'));
     }
+    public function showCourtDetails($slug)
+    {
+        $court = Court::with('facilities')->where('slug', $slug)->firstOrFail();
+        return view('pages.single-court-details', compact('court'));
+    }
 
     public function createCourt(Request $request)
     {
@@ -31,6 +37,14 @@ class CourtsController extends Controller
             'facilities' => 'nullable|array',
             'facilities.*' => 'exists:facilities,id',
         ]);
+        //making slug unique
+        $slug = Str::slug($request->name);
+        $originalSlug = $slug;
+        $count = 1;
+        while (Court::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
+
         $imageName = time() . '.' . $request->image->extension();
         $request->image->move(public_path('image/courts'), $imageName);
         $court = Court::create([
@@ -38,6 +52,7 @@ class CourtsController extends Controller
             'price' => $request->price,
             'image' =>  $imageName,
             'type' => $request->type,
+            'slug' => $slug,
         ]);
         if ($request->has('facilities')) {
             $court->facilities()->sync($request->facilities); // saves to pivot
@@ -51,6 +66,7 @@ class CourtsController extends Controller
         $court = Court::find($id);
         $court->delete();
         File::delete(public_path('image/courts/' . $court->image));
+        return redirect()->back()->with('success', 'Court deleted successfull');
     }
     public function updateCourt(Request $request, $courtId)
     {
@@ -66,6 +82,17 @@ class CourtsController extends Controller
         $court->name = $request->name;
         $court->type = $request->type;
         $court->price = $request->price;
+
+        if ($court->isDirty('name')) {
+            $newSlug = Str::slug($request->name);
+            $originalSlug = $newSlug;
+            $count = 1;
+            while (Court::where('slug', $newSlug)->where('id', '!=', $court->id)->exists()) {
+                $newSlug = $originalSlug . '-' . $count++;
+            }
+            $court->slug = $newSlug;
+        }
+
         $facilityIds = $validated['facilities'] ?? [];
         $court->facilities()->sync($facilityIds);
         // if request has image on it update image form databaaseand delete the file that the old data is pointing to 

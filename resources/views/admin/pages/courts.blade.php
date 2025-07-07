@@ -4,8 +4,12 @@
 
 @section('content')
 <div class="container mt-4">
-
     <!-- Courts comming from the view  -->
+    @if(session()->has('success'))
+    <div class="alert alert-success successMessage">
+        {{ session()->get('success') }}
+    </div>
+    @endif
     @if ($courts->isEmpty())
     <div class="alert alert-warning">No courts added yet.</div>
     @else
@@ -266,5 +270,9 @@
         // Update form action URL dynamically for the court being edited
         document.getElementById('court-price').value = price;
     });
+
+    setTimeout(() => {
+        document.querySelector('.successMessage').style.display = 'none';
+    }, 3000);
 </script>
 @endsection
