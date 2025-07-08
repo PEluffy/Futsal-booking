@@ -7,12 +7,13 @@ use App\Models\Court;
 use App\Models\Facility;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PageController extends Controller
 {
     public function showIndex()
     {
-        $courts = Court::all();
+        $courts = Court::take(3)->get();
         $facilities = Facility::take(4)->get();
         return view('welcome', compact('courts', 'facilities'));
     }
@@ -35,7 +36,8 @@ class PageController extends Controller
     public function showCourts()
     {
         $courts = Court::all();
-        return view('pages.courts', compact('courts'));
+        $facilities = Facility::all();
+        return view('pages.courts', compact('courts', 'facilities'));
     }
     public function showLogin()
     {

@@ -14,8 +14,9 @@
         </div>
 
         <div class="card-body">
-            <h5 class="card-title">{{ $court->name }}</h5>
-            <p class="card-text">Price: Rs. {{ $court->price }}</p>
+
+            <span class="card-title h5 text-primary">{{ $court->name }}</span>
+            <p class="card-text mt-1">Price: Rs. {{ $court->price }}</p>
             <span class="card-text">Type: {{ $court->type }}</span>
         </div>
     </a>

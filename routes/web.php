@@ -89,3 +89,5 @@ Route::post('/admin/facility', [FacilityController::class, 'createFacility'])->n
 Route::post('/admin/court/update/{courtId}', [CourtsController::class, 'updateCourt'])->name('admin.update.court');
 
 Route::get('/court/{slug}', [CourtsController::class, 'showCourtDetails'])->name('show.court.details');
+
+Route::get('/courts/search', [CourtsController::class, 'searchCourts'])->name('court.search');
