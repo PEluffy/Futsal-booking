@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>@yield('title', 'Admin Panel')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @vite(['resources/css/custom.css', 'resources/js/app.js','resources/css/app.css'])
 
     @include('partials.links')
     <!-- Bootstrap CDN (optional, you can use your own CSS) -->

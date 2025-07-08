@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-use Ramsey\Uuid\Type\Integer;
 
 class CourtsController extends Controller
 {
@@ -115,5 +114,12 @@ class CourtsController extends Controller
             ],
             200
         );
+    }
+    public function searchCourts(Request $request)
+    {
+        $name = $request->query('name');
+        $courts = Court::where('name', 'LIKE', "%{$name}%")->get();
+        Log::info($courts);
+        return response()->json(['courts' => $courts], 200);
     }
 }

@@ -1,8 +1,8 @@
 // custom.scss
 
-@use "bootstrap/scss/bootstrap" with (
-    $primary: #37b24d,
-    $secondary: #8ce99a
+@use "~bootstrap/scss/bootstrap" with (
+    $primary: #000000,
+    $secondary: #656565
 );
 
 // Custom styles
@@ -119,4 +119,8 @@ div.booking-form {
 }
 .court-img-container {
     overflow: hidden;
+}
+.fade-out {
+    opacity: 0;
+    transition: opacity 1s ease-out;
 }

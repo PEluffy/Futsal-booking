@@ -10,6 +10,8 @@
         {{ session()->get('success') }}
     </div>
     @endif
+
+
     @if ($courts->isEmpty())
     <div class="alert alert-warning">No courts added yet.</div>
     @else
@@ -272,7 +274,16 @@
     });
 
     setTimeout(() => {
-        document.querySelector('.successMessage').style.display = 'none';
+        const successMessage = document.querySelector('.successMessage');
+        if (successMessage) {
+            successMessage.classList.add('fade-out');
+        }
+        setTimeout(() => {
+            document.querySelector('.successMessage').style.display = 'none';
+        }, 500);
     }, 3000);
+    // setTimeout(() => {
+    //     document.querySelector('.successMessage').style.display = 'none';
+    // }, 3000);
 </script>
 @endsection
