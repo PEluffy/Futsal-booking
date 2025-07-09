@@ -7,6 +7,7 @@ use App\Enums\CourtType;
 use App\Models\Court;
 use App\Models\Facility;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -118,7 +119,15 @@ class CourtsController extends Controller
     public function searchCourts(Request $request)
     {
         $name = $request->query('name');
-        $courts = Court::where('name', 'LIKE', "%{$name}%")->get();
+        $maxPrice = $request->query('price_max');
+        Log::info($maxPrice);
+
+
+        $courts = DB::table('courts')
+            ->whereRaw("name LIKE ?", ["%{$name}%"])
+            ->whereRaw('price < ?', [$maxPrice])
+            ->get();
+
         Log::info($courts);
         return response()->json(['courts' => $courts], 200);
     }

@@ -1,7 +1,6 @@
 import "./bootstrap";
 
 window.getCourtsDatabyName = async function (searchText) {
-    console.log("Searching:", searchText);
     const res = await fetch(
         `/courts/search?name=${encodeURIComponent(searchText)}`,
         {
