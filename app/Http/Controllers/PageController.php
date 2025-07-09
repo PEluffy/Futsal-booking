@@ -33,9 +33,19 @@ class PageController extends Controller
         $facilities = Facility::all();
         return view('pages.facilities', compact('facilities'));
     }
-    public function showCourts()
+    public function showCourts(Request $request)
     {
-        $courts = Court::all();
+        $query = Court::query();
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('price_max')) {
+            $query->where('price', '<=', $request->price_max);
+        }
+
+        $courts = $query->get();
         $facilities = Facility::all();
         return view('pages.courts', compact('courts', 'facilities'));
     }

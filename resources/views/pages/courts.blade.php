@@ -41,7 +41,7 @@
                         <input type="range" class="form-range" min="600" max="5000" step="1" id="priceRange" />
                         <div class="d-flex justify-content-between">
                             <span>Rs. 600</span>
-                            <span>Rs. 5000</span>
+                            <span id="priceLabel">Rs. 5000</span>
                         </div>
                     </div>
                 </div>
@@ -50,9 +50,9 @@
             <!-- Courts Grid (keep using x-court-card here) -->
             <div class="col-md-9">
                 <p class="mb-3">Showing {{ count($courts) }} of {{ $totalCourts ?? count($courts) }} courts</p>
-                <div class="row">
+                <div class="row court-list">
                     @forelse($courts as $court)
-                    <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="col-md-6 col-lg-4 mb-4 ">
                         <x-court-card :court="$court" class="h-100" />
                     </div>
                     @empty
@@ -71,31 +71,120 @@
 
 
     <script>
-        function debounce(func, delay) {
-            let debounceTimeout;
-            return function(...args) {
-                clearTimeout(debounceTimeout);
-                debounceTimeout = setTimeout(() => {
-                    func.apply(this, args);
-                }, delay);
-            };
-        }
-
         const searchInput = document.querySelector('.search-text');
 
-        const handleInput = debounce(async function(e) {
-            const baseUrl = new URL(window.location.href);
-            const params = new URLSearchParams(baseUrl.search);
-            params.delete('name');
-            params.delete('value');
-            params.set('name', e.target.value);
-            baseUrl.search = params.toString();
-            history.replaceState(null, '', baseUrl.toString());
+        class CourtFilter {
+            constructor() {
+                this.searchInput = document.querySelector('.search-text');
+                this.priceRange = document.getElementById('priceRange');
+                this.priceLabel = document.getElementById('priceLabel');
+                this.init();
+            }
 
-            const courts = await getCourtsDatabyName(e.target.value);
-            console.log(courts);
-        }, 500);
-        searchInput.addEventListener('input', handleInput);
+            renderCourts(data) {
+                const container = document.querySelector('.court-list'); // Make sure your container has this class
+                container.innerHTML = '';
+
+                if (data.courts.length === 0) {
+                    container.innerHTML = '<p>No courts found.</p>';
+                    return;
+                }
+                data.courts.forEach(court => {
+                    const colDiv = document.createElement('div');
+                    colDiv.className = 'col-md-6 col-lg-4 mb-4'; // controls layout
+
+                    colDiv.innerHTML = `
+        <div class="card h-100">
+            <a href="/courts/${court.slug}" class="text-decoration-none text-dark">
+                <div class="court-img-container">
+                    <img src="/image/courts/${court.image}" alt="${court.name}" class="card-img-top img-court-card" style="aspect-ratio: 3 / 2; object-fit: cover;" width="400" height="300" />
+                </div>
+                <div class="card-body">
+                    <span class="card-title h5 text-primary">${court.name}</span>
+                    <p class="card-text mt-1">Price: Rs. ${court.price}</p>
+                    <span class="card-text">Type: ${court.type}</span>
+                </div>
+            </a>
+            <div class="text-center mb-2">
+                <a href="/booking" class="btn btn-outline-primary mx-2">Book</a>
+            </div>
+        </div>
+    `;
+
+                    container.appendChild(colDiv);
+                });
+
+            }
+
+            init() {
+                this.loadFiltersFromURL();
+
+                // Debounced event handlers
+                this.searchInput.addEventListener('input', this.debounce(() => {
+                    this.updateUrl();
+                    this.fetchAndDisplayCourts();
+                }, 500));
+
+                this.priceRange.addEventListener('input', this.debounce((e) => {
+                    this.priceLabel.textContent = `Rs. ${this.priceRange.value}`;
+                    this.updateUrl();
+                    this.fetchAndDisplayCourts();
+                }, 300));
+            }
+            loadFiltersFromURL() {
+                const params = new URLSearchParams(window.location.search);
+                const name = params.get('name');
+                const price = params.get('price_max');
+
+                if (name) this.searchInput.value = name;
+                if (price) {
+                    this.priceRange.value = price;
+                    this.priceLabel.textContent = `Rs. ${price}`;
+                }
+            }
+
+            debounce(func, delay) {
+                let debounceTimeout;
+                return function(...args) {
+                    clearTimeout(debounceTimeout);
+                    debounceTimeout = setTimeout(() => {
+                        func.apply(this, args);
+                    }, delay);
+                };
+            }
+            updateUrl() {
+                const url = new URL(window.location.href);
+                const params = new URLSearchParams();
+
+                const name = this.searchInput.value.trim();
+                const price = this.priceRange.value;
+
+                if (name) params.set('name', name);
+                if (price) params.set('price_max', price);
+
+                url.search = params.toString();
+                history.pushState(null, '', url.toString());
+            }
+            async fetchAndDisplayCourts() {
+                const params = new URLSearchParams(window.location.search);
+                console.log("Searching:", params);
+                const res = await fetch(
+                    `/courts/search?${params.toString()}`, {
+                        headers: {
+                            "X-CSRF-TOKEN": document
+                                .querySelector('meta[name="csrf-token"]')
+                                .getAttribute("content"),
+                        },
+                    }
+                );
+                const data = await res.json();
+                // Implement your court rendering logic here
+                this.renderCourts(data);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            new CourtFilter();
+        });
     </script>
 
     @endsection
