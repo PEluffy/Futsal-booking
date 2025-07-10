@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class CourtsController extends Controller
 {
@@ -120,15 +121,23 @@ class CourtsController extends Controller
     {
         $name = $request->query('name');
         $maxPrice = $request->query('price_max');
-        Log::info($maxPrice);
+        $type = $request->query('type');
 
+        $query = DB::table('courts');
 
-        $courts = DB::table('courts')
-            ->whereRaw("name LIKE ?", ["%{$name}%"])
-            ->whereRaw('price < ?', [$maxPrice])
-            ->get();
+        if ($name) {
+            $query->where('name', 'like', "%{$name}%");
+        }
 
-        Log::info($courts);
+        if ($maxPrice) {
+            $query->where('price', '<=', $maxPrice);
+        }
+
+        if ($type) {
+            $query->where('type', $request->type); // Store actual enum value like '5A'
+        }
+
+        $courts = $query->get();
         return response()->json(['courts' => $courts], 200);
     }
 }

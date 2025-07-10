@@ -19,6 +19,14 @@
                         <label class="form-label">Search by Name</label>
                         <input type="text" name="name" class="form-control search-text" placeholder="Enter court name..." />
                     </div>
+                    <div class="mb-3">
+                        <select class="form-select court-type" name="type">
+                            <option value="">Select Type</option>
+                            <option value="7A">7A</option>
+                            <option value="5A">5A</option>
+                            <option value="6A">6A</option>
+                        </select>
+                    </div>
                     <!-- <div class="mb-3">
                         <label class="form-label">Search by Name</label>
                         <input type="text" name="name" value="{{ request('name') }}" class="form-control" placeholder="Enter court name..." />
@@ -38,7 +46,7 @@
                     <!-- Price Range -->
                     <div class="mb-3">
                         <label class="form-label">Price Range</label>
-                        <input type="range" class="form-range" min="600" max="5000" step="1" id="priceRange" />
+                        <input type="range" class="form-range" min="600" max="5000" step="1" id="priceRange" value="5000" />
                         <div class="d-flex justify-content-between">
                             <span>Rs. 600</span>
                             <span id="priceLabel">Rs. 5000</span>
@@ -49,7 +57,7 @@
 
             <!-- Courts Grid (keep using x-court-card here) -->
             <div class="col-md-9">
-                <p class="mb-3">Showing {{ count($courts) }} of {{ $totalCourts ?? count($courts) }} courts</p>
+                <p class="mb-3 totalCourts">Showing {{ count($courts) }} of {{ $totalCourts ?? count($courts) }} courts</p>
                 <div class="row court-list">
                     @forelse($courts as $court)
                     <div class="col-md-6 col-lg-4 mb-4 ">
@@ -78,6 +86,7 @@
                 this.searchInput = document.querySelector('.search-text');
                 this.priceRange = document.getElementById('priceRange');
                 this.priceLabel = document.getElementById('priceLabel');
+                this.courtType = document.querySelector('.court-type');
                 this.init();
             }
 
@@ -125,21 +134,58 @@
                     this.fetchAndDisplayCourts();
                 }, 500));
 
+                this.courtType.addEventListener('input', () => {
+                    this.updateUrl();
+                    this.fetchAndDisplayCourts();
+                }, 500)
+
                 this.priceRange.addEventListener('input', this.debounce((e) => {
                     this.priceLabel.textContent = `Rs. ${this.priceRange.value}`;
                     this.updateUrl();
                     this.fetchAndDisplayCourts();
-                }, 300));
+                }, 500));
             }
             loadFiltersFromURL() {
                 const params = new URLSearchParams(window.location.search);
                 const name = params.get('name');
                 const price = params.get('price_max');
+                const type = params.get('type');
 
                 if (name) this.searchInput.value = name;
                 if (price) {
                     this.priceRange.value = price;
                     this.priceLabel.textContent = `Rs. ${price}`;
+                }
+                if (type) {
+                    this.courtType.value = type;
+                }
+            }
+            renderSkeletons() {
+                const container = document.querySelector('.court-list');
+                container.innerHTML = ''; // Clear old data
+
+                for (let i = 0; i < 3; i++) {
+                    const colDiv = document.createElement('div');
+                    colDiv.className = 'col-md-6 col-lg-4 mb-4';
+
+                    colDiv.innerHTML = `
+            <div class="card h-100">
+                <a class="text-decoration-none text-dark" >
+                    <div class="court-img-container">
+                        <div class="skeleton" style="width: 100%; aspect-ratio: 3 / 2;"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text"></div>
+                    </div>
+                </a>
+                <div class="text-center mb-2">
+                    <div class="skeleton" style="height: 36px; width: 100px; margin: auto;"></div>
+                </div>
+            </div>
+        `;
+                    container.appendChild(colDiv);
                 }
             }
 
@@ -158,14 +204,16 @@
 
                 const name = this.searchInput.value.trim();
                 const price = this.priceRange.value;
+                const type = this.courtType.value;
 
                 if (name) params.set('name', name);
                 if (price) params.set('price_max', price);
-
+                if (type && type !== '') params.set('type', type);
                 url.search = params.toString();
                 history.pushState(null, '', url.toString());
             }
             async fetchAndDisplayCourts() {
+                this.renderSkeletons();
                 const params = new URLSearchParams(window.location.search);
                 console.log("Searching:", params);
                 const res = await fetch(
@@ -179,6 +227,8 @@
                 );
                 const data = await res.json();
                 // Implement your court rendering logic here
+                document.querySelector('.totalCourts').textContent =
+                    `Showing ${data.courts.length} of ${data.total ?? data.courts.length} courts`;
                 this.renderCourts(data);
             }
         }
