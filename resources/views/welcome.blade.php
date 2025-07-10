@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
-@section('content')
 
+
+@section('content')
 @include('partials.carousel')
 @include('partials.courts')
 @include('partials.testimonials')

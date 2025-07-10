@@ -45,6 +45,10 @@ class PageController extends Controller
             $query->where('price', '<=', $request->price_max);
         }
 
+        if ($request->filled('type')) {
+            $query->where('type', '=', $request->type);
+        }
+
         $courts = $query->get();
         $facilities = Facility::all();
         return view('pages.courts', compact('courts', 'facilities'));
