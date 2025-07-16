@@ -24,10 +24,10 @@
 
         <div class="col-lg-4 p-4">
             <h5 class="mb-3">Follow us</h5>
-            <a href="#" class="d-inline-block mb-2 text-decoration-none">
+            <a href={{$contact->twitter}} class="d-inline-block mb-2 text-decoration-none">
                 <i class="bi bi-twitter me-1"></i>Twitter
             </a><br>
-            <a href="#" class="d-inline-block mb-2 text-decoration-none">
+            <a href={{ $contact->facebook }} class="d-inline-block mb-2 text-decoration-none">
                 <i class="bi bi-facebook me-1"></i>Facebook
             </a><br>
             <a href="#" class="d-inline-block mb-2 text-decoration-none">

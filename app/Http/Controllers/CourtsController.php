@@ -124,7 +124,6 @@ class CourtsController extends Controller
         $maxPrice = $request->query('price_max');
         $type = $request->query('type');
         $selectedFacilities = $request->query('facilities');
-        Log::info($selectedFacilities);
 
         $query = Court::query();
 

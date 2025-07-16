@@ -12,12 +12,12 @@
 </head>
 
 <body class="bg-light">
-    @include('partials.header') {{-- Your header.php --}}
+    @include('partials.header')
 
     <main>
-        @yield('content') <!-- Dynamic section changes page to page -->
+        @yield('content')
     </main>
-    @include('partials.footer') {{-- Your footer.php --}}
+    @include('partials.footer', ['contact' => \App\Models\Contact::first()])
 
     @yield('scripts')
 </body>

@@ -12109,4 +12109,11 @@ div.booking-form {
   100% {
     background-color: hsl(200, 20%, 95%);
   }
+}
+#whatsapp-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  cursor: pointer;
 }/*# sourceMappingURL=custom.css.map */
