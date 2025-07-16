@@ -4,7 +4,18 @@
 
 @section('content')
 
+
 <div class="container mt-4">
+    @if(session()->has('warning'))
+    <div class="alert alert-warning alert-message">
+        {{ session()->get('warning') }}
+    </div>
+    @endif
+    @if(session()->has('success'))
+    <div class="alert alert-success alert-message">
+        {{ session()->get('success') }}
+    </div>
+    @endif
     <h2 class="mb-4"> Manage Contact Information</h2>
     <div class="card">
         <div class="card-header bg-black text-white">Update Contact Info</div>
@@ -66,4 +77,18 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+    console.log('we are here');
+    setTimeout(() => {
+        const successMessage = document.querySelector('.alert-message');
+        if (successMessage) {
+            successMessage.classList.add('fade-out');
+        }
+        setTimeout(() => {
+            successMessage.style.display = 'none';
+        }, 500);
+    }, 3000);
+</script>
 @endsection

@@ -17,7 +17,8 @@ class PageController extends Controller
     {
         $courts = Court::take(3)->get();
         $facilities = Facility::take(4)->get();
-        return view('welcome', compact('courts', 'facilities'));
+        $contact = Contact::first();
+        return view('welcome', compact('courts', 'facilities', 'contact'));
     }
 
     public function showDashboard()

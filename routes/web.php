@@ -45,9 +45,7 @@ Route::prefix('admin')->group(function () {
 
     Route::middleware(['adminguestmiddleware'])->group(function () {
         Route::get('/', fn() => view('admin.pages.dashboard'))->name('admin.index');
-        // Route::get('/dashboard', fn() => view('admin.pages.dashboard'))->name('admin.dashboard');
         Route::get('/dashboard', [PageController::class, 'showDashboard'])->name('admin.show.dashboard');
-        // Route::get('/courts', fn() => view('admin.pages.courts'))->name('admin.courts');
 
         Route::get('/courts', [CourtsController::class, 'showCourts'])->name('admin.courts');
         Route::get('/contact', [ContactController::class, 'showContact'])->name('admin.show.contact');

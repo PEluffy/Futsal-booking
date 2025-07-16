@@ -8,6 +8,7 @@
 @include('partials.testimonials')
 @include('partials.facilities')
 @include('partials.membership')
+@include('partials.sticky-whatsapp')
 @endsection
 @section('scripts')
 

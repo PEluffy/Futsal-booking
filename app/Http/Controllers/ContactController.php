@@ -26,6 +26,17 @@ class ContactController extends Controller
 
         $contact = Contact::first();
 
+        $isSame =
+            $contact->phone === $validated['phone'] &&
+            $contact->email === $validated['email'] &&
+            $contact->mapSrc === $validated['mapSrc'] &&
+            $contact->facebook === ($validated['facebook'] ?? null) &&
+            $contact->instagram === ($validated['instagram'] ?? null) &&
+            $contact->twitter === ($validated['twitter'] ?? null);
+
+        if ($isSame) {
+            return back()->with('warning', 'Please change something to update.');
+        }
         $contact->update([
             'phone'     => $validated['phone'],
             'email'     => $validated['email'],
