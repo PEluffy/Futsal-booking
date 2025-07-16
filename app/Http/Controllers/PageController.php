@@ -8,6 +8,7 @@ use App\Models\Facility;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PageController extends Controller
 {
@@ -49,7 +50,8 @@ class PageController extends Controller
             $query->where('type', '=', $request->type);
         }
 
-        $courts = $query->get();
+        $courts = $query->paginate(3)->appends(request()->query());
+        Log::info($courts);
         $facilities = Facility::all();
         return view('pages.courts', compact('courts', 'facilities'));
     }

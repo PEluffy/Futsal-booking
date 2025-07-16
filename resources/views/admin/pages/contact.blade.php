@@ -25,7 +25,7 @@
                 <div class="mb-3">
                     <label for="phone" class="form-label">Phone Number</label>
                     <input type="text" name="phone" id="phone" class="form-control"
-                        placeholder="+977-98XXXXXXXX" value="{{ old('phone', $contact->phone ?? '') }}" required>
+                        placeholder="+97798XXXXXXXX" value="{{ old('phone', $contact->phone ?? '') }}" required>
                 </div>
 
                 <div class="mb-3">
