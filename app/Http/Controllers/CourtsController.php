@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Enum;
+
+use function Laravel\Prompts\select;
 
 class CourtsController extends Controller
 {
@@ -32,7 +33,7 @@ class CourtsController extends Controller
         Log::info($request);
         $request->validate([
             'name' => 'required',
-            'price' => 'required',
+            'price' => 'required|numeric',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif',
             'type' => ['required', Rule::in(array_column(CourtType::cases(), 'value'))],
             'facilities' => 'nullable|array',
@@ -122,8 +123,10 @@ class CourtsController extends Controller
         $name = $request->query('name');
         $maxPrice = $request->query('price_max');
         $type = $request->query('type');
+        $selectedFacilities = $request->query('facilities');
+        Log::info($selectedFacilities);
 
-        $query = DB::table('courts');
+        $query = Court::query();
 
         if ($name) {
             $query->where('name', 'like', "%{$name}%");
@@ -134,10 +137,23 @@ class CourtsController extends Controller
         }
 
         if ($type) {
-            $query->where('type', $request->type); // Store actual enum value like '5A'
+            $query->where('type', $type); // fixed cleaner access
         }
 
-        $courts = $query->get();
-        return response()->json(['courts' => $courts], 200);
+        // ✅ Filter by all selected facilities
+        if ($selectedFacilities) {
+            foreach ($selectedFacilities as $facility) {
+                $query->whereHas('facilities', function ($q) use ($facility) {
+                    $q->where('name', $facility);
+                });
+            }
+        }
+
+        $courts = $query->paginate(3)->appends(request()->query());
+
+        return response()->json([
+            'courts' => $courts,
+            'links' => (string) $courts->links('pagination::bootstrap-5'),
+        ]);
     }
 }

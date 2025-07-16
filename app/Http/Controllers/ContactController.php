@@ -16,7 +16,7 @@ class ContactController extends Controller
     public function updateContact(Request $request)
     {
         $validated = $request->validate([
-            'phone'     => 'required|string|max:20',
+            'phone'     => ['required', new \App\Rules\PhoneNumberRule],
             'email'     => 'required|email',
             'mapSrc'    => 'required|string',
             'facebook'  => 'nullable|url',

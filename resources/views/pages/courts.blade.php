@@ -57,7 +57,6 @@
 
             <!-- Courts Grid (keep using x-court-card here) -->
             <div class="col-md-9">
-                <p class="mb-3 totalCourts">Showing {{ count($courts) }} of {{ $totalCourts ?? count($courts) }} courts</p>
                 <div class="row court-list">
                     @forelse($courts as $court)
                     <div class="col-md-6 col-lg-4 mb-4 ">
@@ -71,7 +70,34 @@
                     </div>
                     @endforelse
                 </div>
+                <div class="pagination-container ">
+                    {!! $courts->links('pagination::bootstrap-5') !!}
+                </div>
+
+                <!-- <div class="mt-4 d-flex justify-content-center">
+                    <nav aria-label=" Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div> -->
             </div>
+
+
         </div>
     </div>
     @endsection
@@ -94,11 +120,11 @@
                 const container = document.querySelector('.court-list'); // Make sure your container has this class
                 container.innerHTML = '';
 
-                if (data.courts.length === 0) {
+                if (data.length === 0) {
                     container.innerHTML = '<p>No courts found.</p>';
                     return;
                 }
-                data.courts.forEach(court => {
+                data.forEach(court => {
                     const colDiv = document.createElement('div');
                     colDiv.className = 'col-md-6 col-lg-4 mb-4'; // controls layout
 
@@ -144,12 +170,30 @@
                     this.updateUrl();
                     this.fetchAndDisplayCourts();
                 }, 500));
+                document.querySelectorAll('input[name="facilities[]"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        this.updateUrl();
+                        this.fetchAndDisplayCourts();
+                    });
+                });
             }
+            getCheckedFacilities() {
+                return Array.from(
+                    document.querySelectorAll('input[name="facilities[]"]:checked')
+                ).map(cb => cb.value);
+            }
+
             loadFiltersFromURL() {
                 const params = new URLSearchParams(window.location.search);
                 const name = params.get('name');
                 const price = params.get('price_max');
                 const type = params.get('type');
+                const facilities = params.getAll('facilities[]');
+                facilities.forEach(facility => {
+                    const checkbox = document.querySelector(`input[name="facilities[]"][value="${facility}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+
 
                 if (name) this.searchInput.value = name;
                 if (price) {
@@ -159,6 +203,7 @@
                 if (type) {
                     this.courtType.value = type;
                 }
+
             }
             renderSkeletons() {
                 const container = document.querySelector('.court-list');
@@ -188,6 +233,22 @@
                     container.appendChild(colDiv);
                 }
             }
+            renderPagination(linksHtml) {
+                const paginationContainer = document.querySelector('.pagination-container');
+                paginationContainer.innerHTML = linksHtml;
+                this.attachPaginationEvents();
+            }
+
+            attachPaginationEvents() {
+                document.querySelectorAll('.pagination a').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const url = new URL(link.href);
+                        history.pushState(null, '', url.toString());
+                        this.fetchAndDisplayCourts();
+                    });
+                });
+            }
 
             debounce(func, delay) {
                 let debounceTimeout;
@@ -205,10 +266,14 @@
                 const name = this.searchInput.value.trim();
                 const price = this.priceRange.value;
                 const type = this.courtType.value;
+                const facilities = this.getCheckedFacilities();
 
                 if (name) params.set('name', name);
                 if (price) params.set('price_max', price);
                 if (type && type !== '') params.set('type', type);
+                facilities.forEach(facility => {
+                    params.append('facilities[]', facility);
+                });
                 url.search = params.toString();
                 history.pushState(null, '', url.toString());
             }
@@ -227,9 +292,9 @@
                 );
                 const data = await res.json();
                 // Implement your court rendering logic here
-                document.querySelector('.totalCourts').textContent =
-                    `Showing ${data.courts.length} of ${data.total ?? data.courts.length} courts`;
-                this.renderCourts(data);
+                this.renderCourts(data.courts.data);
+                console.log(data);
+                this.renderPagination(data.links);
             }
         }
         document.addEventListener('DOMContentLoaded', () => {
