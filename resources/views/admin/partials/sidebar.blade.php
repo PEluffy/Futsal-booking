@@ -15,6 +15,9 @@
     </h4>
     <ul class="nav flex-column mt-4">
         <li class="nav-item mb-2">
+            <a href="{{ route('admin.show.dashboard') }}" class="nav-link text-white"> Dashboard</a>
+        </li>
+        <li class="nav-item mb-2">
             <a href="{{ route('admin.courts') }}" class="nav-link text-white">Courts</a>
         </li>
         <li class="nav-item mb-2">

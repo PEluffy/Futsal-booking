@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contact;
 use App\Models\Court;
 use App\Models\Facility;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,14 @@ class PageController extends Controller
         $courts = Court::take(3)->get();
         $facilities = Facility::take(4)->get();
         return view('welcome', compact('courts', 'facilities'));
+    }
+
+    public function showDashboard()
+    {
+        $totalUsers = User::all()->count();
+        $totalFacilities = Facility::all()->count();
+        $totalCourts = Court::all()->count();
+        return view('admin.pages.dashboard', compact('totalUsers', 'totalFacilities', 'totalCourts'));
     }
     public function showBooking()
     {
